@@ -1,7 +1,6 @@
 package com.drewm.controller;
 
 import com.drewm.dto.UserDTO;
-import com.drewm.model.User;
 import com.drewm.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
