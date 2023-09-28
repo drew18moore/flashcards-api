@@ -1,5 +1,6 @@
 package com.drewm.controller;
 
+import com.drewm.dto.UserDTO;
 import com.drewm.model.User;
 import com.drewm.service.UserService;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> fetchAllUsers() {
+    public List<UserDTO> fetchAllUsers() {
         return userService.getAllUsers();
     }
 }
