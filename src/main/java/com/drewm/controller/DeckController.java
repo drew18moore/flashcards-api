@@ -1,12 +1,11 @@
 package com.drewm.controller;
 
+import com.drewm.dto.NewDeckRequest;
 import com.drewm.service.DeckService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/deck")
@@ -17,5 +16,10 @@ public class DeckController {
     @GetMapping
     public ResponseEntity<?> getAllDecksByUser(Authentication authentication) {
         return ResponseEntity.ok(deckService.getAllDecksByUser(authentication));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createNewDeck(@RequestBody NewDeckRequest request, Authentication authentication) {
+        return ResponseEntity.ok(deckService.newDeck(request, authentication));
     }
 }
