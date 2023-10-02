@@ -28,4 +28,10 @@ public class DeckController {
     public ResponseEntity<?> editDeck(@PathVariable Integer deckId, @RequestBody EditDeckRequest request, Authentication authentication) {
         return ResponseEntity.ok(deckService.editDeck(deckId, request, authentication));
     }
+
+    @DeleteMapping("/{deckId}")
+    public ResponseEntity<?> deleteDeck(@PathVariable Integer deckId, Authentication authentication) {
+        deckService.deleteDeck(deckId, authentication);
+        return ResponseEntity.ok("Deck with id: " + deckId + " has been deleted successfully");
+    }
 }

@@ -75,4 +75,17 @@ public class DeckService {
         deckRepository.save(deck);
         return deckDTOMapper.apply(deck);
     }
+
+    public void deleteDeck(Integer deckId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Integer userId = user.getId();
+
+        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new ResourceNotFoundException("Deck not found"));
+
+        if (!deck.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not authorized to delete this deck");
+        }
+
+        deckRepository.deleteById(deckId);
+    }
 }
