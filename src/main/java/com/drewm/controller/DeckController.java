@@ -1,5 +1,6 @@
 package com.drewm.controller;
 
+import com.drewm.dto.EditDeckRequest;
 import com.drewm.dto.NewDeckRequest;
 import com.drewm.service.DeckService;
 import lombok.RequiredArgsConstructor;
@@ -21,5 +22,10 @@ public class DeckController {
     @PostMapping
     public ResponseEntity<?> createNewDeck(@RequestBody NewDeckRequest request, Authentication authentication) {
         return ResponseEntity.ok(deckService.newDeck(request, authentication));
+    }
+
+    @PatchMapping("/{deckId}")
+    public ResponseEntity<?> editDeck(@PathVariable Integer deckId, @RequestBody EditDeckRequest request, Authentication authentication) {
+        return ResponseEntity.ok(deckService.editDeck(deckId, request, authentication));
     }
 }

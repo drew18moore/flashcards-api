@@ -1,7 +1,7 @@
 package com.drewm.dto;
 
-
-public record NewDeckRequest(
+public record EditDeckRequest(
         String name,
         Boolean isPrivate
-) {}
+) {
+}
