@@ -34,4 +34,9 @@ public class DeckController {
         deckService.deleteDeck(deckId, authentication);
         return ResponseEntity.ok("Deck with id: " + deckId + " has been deleted successfully");
     }
+
+    @GetMapping("/{deckId}/cards")
+    public ResponseEntity<?> getAllCardsByDeckId(@PathVariable Integer deckId, Authentication authentication) {
+        return ResponseEntity.ok(deckService.getAllCardsByDeckId(deckId, authentication));
+    }
 }

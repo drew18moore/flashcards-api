@@ -25,19 +25,6 @@ public class CardService {
     private final CardDTOMapper cardDTOMapper;
     private final DeckRepository deckRepository;
 
-    public List<CardDTO> getAllCardsByDeckId(Integer deckId, Authentication authentication) {
-        User user = (User) authentication.getPrincipal();
-        Integer userId = user.getId();
-
-        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new ResourceNotFoundException("Deck not found"));
-
-        if(deck.isPrivate() && !deck.getUserId().equals(userId)) {
-            throw new UnauthorizedException("You are not authorized to view cards from this deck");
-        }
-
-        return cardRepository.findAllByDeckId(deckId).stream().map(cardDTOMapper).collect(Collectors.toList());
-    }
-
     public CardDTO createNewCardInDeck(NewCardRequest request, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         Integer userId = user.getId();

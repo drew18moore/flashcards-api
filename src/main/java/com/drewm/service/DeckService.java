@@ -1,5 +1,6 @@
 package com.drewm.service;
 
+import com.drewm.dto.CardDTO;
 import com.drewm.dto.DeckDTO;
 import com.drewm.dto.EditDeckRequest;
 import com.drewm.dto.NewDeckRequest;
@@ -7,7 +8,9 @@ import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.exception.UnauthorizedException;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
+import com.drewm.repository.CardRepository;
 import com.drewm.repository.DeckRepository;
+import com.drewm.utils.CardDTOMapper;
 import com.drewm.utils.DeckDTOMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -22,6 +25,8 @@ import java.util.stream.Collectors;
 public class DeckService {
     private final DeckRepository deckRepository;
     private final DeckDTOMapper deckDTOMapper;
+    private final CardRepository cardRepository;
+    private final CardDTOMapper cardDTOMapper;
 
     public List<DeckDTO> getAllDecksByUser(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
@@ -87,5 +92,18 @@ public class DeckService {
         }
 
         deckRepository.deleteById(deckId);
+    }
+
+    public List<CardDTO> getAllCardsByDeckId(Integer deckId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Integer userId = user.getId();
+
+        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new ResourceNotFoundException("Deck not found"));
+
+        if(deck.isPrivate() && !deck.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not authorized to view cards from this deck");
+        }
+
+        return cardRepository.findAllByDeckId(deckId).stream().map(cardDTOMapper).collect(Collectors.toList());
     }
 }
