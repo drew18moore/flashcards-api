@@ -32,7 +32,9 @@ public class CardService {
         String frontText = request.frontText();
         String backText = request.backText();
 
-        System.out.println(frontText);
+        if (deckId == null) {
+            throw new IllegalArgumentException("deckId cannot be empty");
+        }
 
         if (!StringUtils.hasLength(frontText)) {
             throw new IllegalArgumentException("frontText cannot be empty");
@@ -42,7 +44,7 @@ public class CardService {
             throw new IllegalArgumentException("backText cannot be empty");
         }
 
-        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new ResourceNotFoundException("Deck not found"));
+        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new ResourceNotFoundException("Deck not found with id: " + deckId));
 
         if(!deck.getUserId().equals(userId)) {
             throw new UnauthorizedException("You are not authorized to create cards in this deck");
