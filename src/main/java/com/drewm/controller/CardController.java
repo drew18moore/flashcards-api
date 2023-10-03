@@ -18,8 +18,8 @@ public class CardController {
         return ResponseEntity.ok(cardService.getAllCardsByDeckId(deckId, authentication));
     }
 
-    @PostMapping("/{deckId}")
-    public ResponseEntity<?> createNewCardInDeck(@PathVariable Integer deckId, @RequestBody NewCardRequest request, Authentication authentication) {
-        return ResponseEntity.ok(cardService.createNewCardInDeck(deckId, request, authentication));
+    @PostMapping
+    public ResponseEntity<?> createNewCardInDeck(@RequestBody NewCardRequest request, Authentication authentication) {
+        return ResponseEntity.ok(cardService.createNewCardInDeck(request, authentication));
     }
 }

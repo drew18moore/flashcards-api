@@ -38,9 +38,10 @@ public class CardService {
         return cardRepository.findAllByDeckId(deckId).stream().map(cardDTOMapper).collect(Collectors.toList());
     }
 
-    public CardDTO createNewCardInDeck(Integer deckId, NewCardRequest request, Authentication authentication) {
+    public CardDTO createNewCardInDeck(NewCardRequest request, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
         Integer userId = user.getId();
+        Integer deckId = request.deckId();
         String frontText = request.frontText();
         String backText = request.backText();
 
