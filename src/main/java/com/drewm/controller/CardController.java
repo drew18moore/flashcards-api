@@ -1,5 +1,6 @@
 package com.drewm.controller;
 
+import com.drewm.dto.EditCardRequest;
 import com.drewm.dto.NewCardRequest;
 import com.drewm.service.CardService;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,10 @@ public class CardController {
     @PostMapping
     public ResponseEntity<?> createNewCardInDeck(@RequestBody NewCardRequest request, Authentication authentication) {
         return ResponseEntity.ok(cardService.createNewCardInDeck(request, authentication));
+    }
+
+    @PatchMapping("/{cardId}")
+    public ResponseEntity<?> editCard(@PathVariable Integer cardId, @RequestBody EditCardRequest request, Authentication authentication) {
+        return ResponseEntity.ok(cardService.editCard(cardId, request, authentication));
     }
 }

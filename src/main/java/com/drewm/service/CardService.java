@@ -1,6 +1,7 @@
 package com.drewm.service;
 
 import com.drewm.dto.CardDTO;
+import com.drewm.dto.EditCardRequest;
 import com.drewm.dto.NewCardRequest;
 import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.exception.UnauthorizedException;
@@ -52,5 +53,28 @@ public class CardService {
 
         Card newCard = cardRepository.save(new Card(userId, deckId, frontText, backText));
         return cardDTOMapper.apply(newCard);
+    }
+
+    public CardDTO editCard(Integer cardId, EditCardRequest request, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Integer userId = user.getId();
+        String frontText = request.frontText();
+        String backText = request.backText();
+
+        if (cardId == null) {
+            throw new IllegalArgumentException("cardId cannot be empty");
+        }
+
+        Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found with ID: " + cardId));
+
+        if (!card.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not authorized to edit this card");
+        }
+
+        if (frontText != null && !frontText.isEmpty()) card.setFrontText(frontText);
+        if (backText != null && !backText.isEmpty()) card.setBackText(backText);
+
+        cardRepository.save(card);
+        return cardDTOMapper.apply(card);
     }
 }
