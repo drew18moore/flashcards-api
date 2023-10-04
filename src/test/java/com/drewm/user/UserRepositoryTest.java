@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DataJpaTest
@@ -23,7 +25,7 @@ public class UserRepositoryTest {
     }
 
     @Test
-    void shouldFindUserByUsername() {
+    void findUserByUsername_exists() {
         final String username = "test-user";
         User user = User.builder()
                 .username(username)
@@ -33,5 +35,30 @@ public class UserRepositoryTest {
 
         User foundUser = userRepository.findUserByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         assertThat(foundUser).isEqualTo(user);
+    }
+
+    @Test
+    void findUserByUsername_notExists() {
+        Optional<User> user = userRepository.findUserByUsername("username");
+        assertThat(user.isPresent()).isFalse();
+    }
+
+    @Test
+    void existsByUsername_exists() {
+        final String username = "test-user";
+        User user = User.builder()
+                .username(username)
+                .password("pass123")
+                .build();
+        userRepository.save(user);
+
+        boolean exists = userRepository.existsByUsername(username);
+        assertThat(exists).isTrue();
+    }
+
+    @Test
+    void existsByUsername_notExists() {
+        boolean exists = userRepository.existsByUsername("username");
+        assertThat(exists).isFalse();
     }
 }
