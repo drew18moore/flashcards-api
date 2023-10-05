@@ -1,8 +1,7 @@
-package com.drewm.user;
+package com.drewm.repository;
 
 import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.model.User;
-import com.drewm.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

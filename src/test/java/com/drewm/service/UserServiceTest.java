@@ -1,4 +1,4 @@
-package com.drewm.user;
+package com.drewm.service;
 
 import com.drewm.dto.UserDTO;
 import com.drewm.model.User;
