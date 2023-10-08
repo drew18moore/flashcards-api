@@ -1,6 +1,7 @@
 package com.drewm.service;
 
 import com.drewm.dto.DeckDTO;
+import com.drewm.dto.NewDeckRequest;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
 import com.drewm.repository.CardRepository;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
@@ -21,8 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DeckServiceTest {
@@ -69,6 +70,30 @@ class DeckServiceTest {
 
     @Test
     void newDeck() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        NewDeckRequest request = new NewDeckRequest("New Deck", true);
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.save(any())).thenAnswer(invocation -> {
+            Deck deck = invocation.getArgument(0);
+            deck.setId(1);
+            return deck;
+        });
+
+        DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null);
+        when(deckDTOMapper.apply(any(Deck.class))).thenReturn(mockDeckDTO);
+
+        // then
+        DeckDTO deckDTO = deckService.newDeck(request, authentication);
+        System.out.println(deckDTO);
+
+        // assert
+        verify(deckRepository, times(1)).save(any());
+        assertThat(request.name()).isEqualTo(deckDTO.name());
+        assertThat(request.isPrivate()).isEqualTo(deckDTO.isPrivate());
     }
 
     @Test
