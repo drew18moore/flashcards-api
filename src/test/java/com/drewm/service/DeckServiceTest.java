@@ -230,6 +230,22 @@ class DeckServiceTest {
     }
 
     @Test
+    void deleteDeck_unauthorizedUser() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Deck existingDeck = new Deck(2, "Deck #1", true);
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.of(existingDeck));
+
+        // assert
+        assertThrows(UnauthorizedException.class, () -> deckService.deleteDeck(deckId, authentication));
+    }
+
+    @Test
     @Disabled
     void getAllCardsByDeckId() {
     }
