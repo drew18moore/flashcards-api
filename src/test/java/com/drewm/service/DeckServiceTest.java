@@ -22,6 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -74,26 +75,37 @@ class DeckServiceTest {
         User user = new User(1, "test user", "testuser", "pass123");
         NewDeckRequest request = new NewDeckRequest("New Deck", true);
         Authentication authentication = mock(Authentication.class);
+        Deck deck = new Deck(1, "Deck #1", true);
 
         // when
         when(authentication.getPrincipal()).thenReturn(user);
-        when(deckRepository.save(any())).thenAnswer(invocation -> {
-            Deck deck = invocation.getArgument(0);
-            deck.setId(1);
-            return deck;
-        });
+        when(deckRepository.save(any())).thenReturn(deck);
 
         DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null);
         when(deckDTOMapper.apply(any(Deck.class))).thenReturn(mockDeckDTO);
 
         // then
         DeckDTO deckDTO = deckService.newDeck(request, authentication);
-        System.out.println(deckDTO);
 
         // assert
         verify(deckRepository, times(1)).save(any());
         assertThat(request.name()).isEqualTo(deckDTO.name());
         assertThat(request.isPrivate()).isEqualTo(deckDTO.isPrivate());
+    }
+
+    @Test
+    void newDeck_emptyName() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        NewDeckRequest request = new NewDeckRequest("", true);
+        Authentication authentication = mock(Authentication.class);
+        Deck deck = new Deck(1, "Deck #1", true);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> deckService.newDeck(request, authentication));
     }
 
     @Test
