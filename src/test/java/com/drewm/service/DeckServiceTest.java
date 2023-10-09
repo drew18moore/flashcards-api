@@ -215,6 +215,21 @@ class DeckServiceTest {
     }
 
     @Test
+    void deleteDeck_nonexistentDeck() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.empty());
+
+        // assert
+        assertThrows(ResourceNotFoundException.class, () -> deckService.deleteDeck(deckId, authentication));
+    }
+
+    @Test
     @Disabled
     void getAllCardsByDeckId() {
     }
