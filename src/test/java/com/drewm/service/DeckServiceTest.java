@@ -3,6 +3,7 @@ package com.drewm.service;
 import com.drewm.dto.DeckDTO;
 import com.drewm.dto.EditDeckRequest;
 import com.drewm.dto.NewDeckRequest;
+import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
 import com.drewm.repository.CardRepository;
@@ -145,6 +146,22 @@ class DeckServiceTest {
         // assert
         assertThat(deckDTO.name()).isEqualTo(request.name());
         assertThat(deckDTO.isPrivate()).isFalse();
+    }
+
+    @Test
+    void editDeck_nonexistentDeck() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        EditDeckRequest request = new EditDeckRequest("Deck #1", false);
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.empty());
+
+        // assert
+        assertThrows(ResourceNotFoundException.class, () -> deckService.editDeck(deckId, request, authentication));
     }
 
     @Test
