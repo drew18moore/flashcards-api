@@ -197,6 +197,21 @@ class DeckServiceTest {
 
     @Test
     void deleteDeck() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Deck existingDeck = new Deck(1, "Deck #1", true);
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.of(existingDeck));
+
+        // then
+        deckService.deleteDeck(deckId, authentication);
+
+        // assert
+        verify(deckRepository, times(1)).deleteById(deckId);
     }
 
     @Test
