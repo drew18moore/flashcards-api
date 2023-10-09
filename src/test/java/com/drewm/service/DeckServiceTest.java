@@ -1,6 +1,7 @@
 package com.drewm.service;
 
 import com.drewm.dto.DeckDTO;
+import com.drewm.dto.EditDeckRequest;
 import com.drewm.dto.NewDeckRequest;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -123,6 +125,26 @@ class DeckServiceTest {
 
     @Test
     void editDeck() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        EditDeckRequest request = new EditDeckRequest("Deck #1", false);
+        Authentication authentication = mock(Authentication.class);
+
+        Deck existingDeck = new Deck(1, "Deck #1", true);
+        DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.of(existingDeck));
+        when(deckDTOMapper.apply(any(Deck.class))).thenReturn(mockDeckDTO);
+
+        // then
+        DeckDTO deckDTO = deckService.editDeck(deckId, request, authentication);
+
+        // assert
+        assertThat(deckDTO.name()).isEqualTo(request.name());
+        assertThat(deckDTO.isPrivate()).isFalse();
     }
 
     @Test
