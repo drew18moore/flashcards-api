@@ -99,7 +99,20 @@ class DeckServiceTest {
         User user = new User(1, "test user", "testuser", "pass123");
         NewDeckRequest request = new NewDeckRequest("", true);
         Authentication authentication = mock(Authentication.class);
-        Deck deck = new Deck(1, "Deck #1", true);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> deckService.newDeck(request, authentication));
+    }
+
+    @Test
+    void newDeck_nullIsPrivate() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        NewDeckRequest request = new NewDeckRequest("Deck #1", null);
+        Authentication authentication = mock(Authentication.class);
 
         // when
         when(authentication.getPrincipal()).thenReturn(user);
