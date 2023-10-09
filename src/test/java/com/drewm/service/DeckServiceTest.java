@@ -15,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
@@ -147,6 +146,20 @@ class DeckServiceTest {
         // assert
         assertThat(deckDTO.name()).isEqualTo(request.name());
         assertThat(deckDTO.isPrivate()).isFalse();
+    }
+
+    @Test
+    void editDeck_nullDeckId() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        EditDeckRequest request = new EditDeckRequest("Deck #1", false);
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> deckService.editDeck(null, request, authentication));
     }
 
     @Test
