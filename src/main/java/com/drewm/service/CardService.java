@@ -30,8 +30,8 @@ public class CardService {
         User user = (User) authentication.getPrincipal();
         Integer userId = user.getId();
         Integer deckId = request.deckId();
-        String frontText = request.frontText();
-        String backText = request.backText();
+        String frontText = request.frontText().trim();
+        String backText = request.backText().trim();
 
         if (deckId == null) {
             throw new IllegalArgumentException("deckId cannot be empty");
