@@ -30,18 +30,18 @@ public class CardService {
         User user = (User) authentication.getPrincipal();
         Integer userId = user.getId();
         Integer deckId = request.deckId();
-        String frontText = request.frontText().trim();
-        String backText = request.backText().trim();
+        String frontText = request.frontText();
+        String backText = request.backText();
 
         if (deckId == null) {
             throw new IllegalArgumentException("deckId cannot be empty");
         }
 
-        if (!StringUtils.hasLength(frontText)) {
+        if (frontText == null || !StringUtils.hasLength(frontText.trim())) {
             throw new IllegalArgumentException("frontText cannot be empty");
         }
 
-        if (!StringUtils.hasLength(backText)) {
+        if (backText == null || !StringUtils.hasLength(backText.trim())) {
             throw new IllegalArgumentException("backText cannot be empty");
         }
 
@@ -51,7 +51,7 @@ public class CardService {
             throw new UnauthorizedException("You are not authorized to create cards in this deck");
         }
 
-        Card newCard = cardRepository.save(new Card(userId, deckId, frontText, backText));
+        Card newCard = cardRepository.save(new Card(userId, deckId, frontText.trim(), backText.trim()));
         return cardDTOMapper.apply(newCard);
     }
 

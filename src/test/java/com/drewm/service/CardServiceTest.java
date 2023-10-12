@@ -109,6 +109,34 @@ class CardServiceTest {
     }
 
     @Test
+    void createNewCardInDeck_nullBackText() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        NewCardRequest request = new NewCardRequest(1, "Front", null);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> cardService.createNewCardInDeck(request, authentication));
+    }
+
+    @Test
+    void createNewCardInDeck_emptyBackTextString() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        NewCardRequest request = new NewCardRequest(1, "Front", "");
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> cardService.createNewCardInDeck(request, authentication));
+    }
+
+    @Test
     void editCard() {
     }
 }
