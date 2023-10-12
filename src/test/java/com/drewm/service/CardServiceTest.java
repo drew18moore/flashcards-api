@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -63,6 +64,20 @@ class CardServiceTest {
         assertThat(request.deckId()).isEqualTo(cardDTO.deckId());
         assertThat(request.frontText()).isEqualTo(cardDTO.fontText());
         assertThat(request.backText()).isEqualTo(cardDTO.backText());
+    }
+
+    @Test
+    void createNewCardInDeck_emptyDeckId() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        NewCardRequest request = new NewCardRequest(null, "Front", "Back");
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> cardService.createNewCardInDeck(request, authentication));
     }
 
     @Test
