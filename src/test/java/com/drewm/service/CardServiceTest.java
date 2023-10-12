@@ -2,6 +2,7 @@ package com.drewm.service;
 
 import com.drewm.dto.CardDTO;
 import com.drewm.dto.NewCardRequest;
+import com.drewm.exception.UnauthorizedException;
 import com.drewm.model.Card;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
@@ -134,6 +135,22 @@ class CardServiceTest {
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> cardService.createNewCardInDeck(request, authentication));
+    }
+
+    @Test
+    void createNewCardInDeck_unauthorizedUser() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        NewCardRequest request = new NewCardRequest(1, "Front", "Back");
+        Deck deck = new Deck(request.deckId(), 2, "Deck #1", true, null);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deck.getId())).thenReturn(Optional.of(deck));
+
+        // assert
+        assertThrows(UnauthorizedException.class, () -> cardService.createNewCardInDeck(request, authentication));
     }
 
     @Test
