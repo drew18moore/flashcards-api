@@ -1,6 +1,7 @@
 package com.drewm.service;
 
 import com.drewm.dto.CardDTO;
+import com.drewm.dto.EditCardRequest;
 import com.drewm.dto.NewCardRequest;
 import com.drewm.exception.UnauthorizedException;
 import com.drewm.model.Card;
@@ -155,5 +156,27 @@ class CardServiceTest {
 
     @Test
     void editCard() {
+        // given
+        final int cardId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        EditCardRequest request = new EditCardRequest("New Front", "New Back");
+
+        Deck deck = new Deck(1, user.getId(), "Deck #1", true, null);
+        Card existingCard = new Card(user.getId(), 1, "Front", "Back");
+        CardDTO mockCardDTO = new CardDTO(existingCard.getId(), user.getId(), deck.getId(), request.frontText(), request.backText(), null);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(cardRepository.findById(cardId)).thenReturn(Optional.of(existingCard));
+        when(cardDTOMapper.apply(any(Card.class))).thenReturn(mockCardDTO);
+
+        // then
+        CardDTO cardDTO = cardService.editCard(cardId, request, authentication);
+
+        // assert
+        verify(cardRepository, times(1)).save(any());
+        assertThat(cardDTO.fontText()).isEqualTo(request.frontText());
+        assertThat(cardDTO.backText()).isEqualTo(request.backText());
     }
 }
