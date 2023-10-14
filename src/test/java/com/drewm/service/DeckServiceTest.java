@@ -14,7 +14,6 @@ import com.drewm.repository.DeckRepository;
 import com.drewm.utils.CardDTOMapper;
 import com.drewm.utils.DeckDTOMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -273,5 +272,36 @@ class DeckServiceTest {
 
         // assert
         assertThat(result).isEqualTo(Arrays.asList(cardDTO1, cardDTO2));
+    }
+
+    @Test
+    void getAllCardsByDeckId_deckNotFound() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.empty());
+
+        // assert
+        assertThrows(ResourceNotFoundException.class, () -> deckService.getAllCardsByDeckId(deckId, authentication));
+    }
+
+    @Test
+    void getAllCardsByDeckId_unauthorizedUser() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Deck existingDeck = new Deck(deckId, 2, "Deck #1", true, null);
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.of(existingDeck));
+
+        // assert
+        assertThrows(UnauthorizedException.class, () -> deckService.getAllCardsByDeckId(deckId, authentication));
     }
 }
