@@ -236,7 +236,6 @@ class CardServiceTest {
         // given
         final int cardId = 1;
         User user = new User(1, "test user", "testuser", "pass123");
-        Deck deck = new Deck(1, user.getId(), "Deck #1", true, null);
         Card existingCard = new Card(user.getId(), 1, "Front", "Back");
         Authentication authentication = mock(Authentication.class);
 
@@ -249,5 +248,20 @@ class CardServiceTest {
 
         // assert
         verify(cardRepository, times(1)).deleteById(cardId);
+    }
+
+    @Test
+    void deleteCard_cardNotFound() {
+        // given
+        final int cardId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(cardRepository.findById(cardId)).thenReturn(Optional.empty());
+
+        // assert
+        assertThrows(ResourceNotFoundException.class, () -> cardService.deleteCard(cardId, authentication));
     }
 }
