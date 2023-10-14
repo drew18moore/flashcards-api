@@ -1,10 +1,12 @@
 package com.drewm.service;
 
+import com.drewm.dto.CardDTO;
 import com.drewm.dto.DeckDTO;
 import com.drewm.dto.EditDeckRequest;
 import com.drewm.dto.NewDeckRequest;
 import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.exception.UnauthorizedException;
+import com.drewm.model.Card;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
 import com.drewm.repository.CardRepository;
@@ -246,7 +248,30 @@ class DeckServiceTest {
     }
 
     @Test
-    @Disabled
     void getAllCardsByDeckId() {
+        // given
+        final int deckId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Deck existingDeck = new Deck(deckId, user.getId(), "Deck #1", true, null);
+        Authentication authentication = mock(Authentication.class);
+
+        Card card1 = new Card(1, user.getId(), existingDeck.getId(), "Front1", "Back1", null);
+        Card card2 = new Card(2, user.getId(), existingDeck.getId(), "Front2", "Back2", null);
+
+        CardDTO cardDTO1 = new CardDTO(card1.getId(), card1.getUserId(), card1.getDeckId(), card1.getFrontText(), card1.getBackText(), card1.getCreatedAt());
+        CardDTO cardDTO2 = new CardDTO(card2.getId(), card2.getUserId(), card2.getDeckId(), card2.getFrontText(), card2.getBackText(), card2.getCreatedAt());
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(deckRepository.findById(deckId)).thenReturn(Optional.of(existingDeck));
+        when(cardRepository.findAllByDeckId(deckId)).thenReturn(List.of(card1, card2));
+        when(cardDTOMapper.apply(card1)).thenReturn(cardDTO1);
+        when(cardDTOMapper.apply(card2)).thenReturn(cardDTO2);
+
+        // then
+        List<CardDTO> result = deckService.getAllCardsByDeckId(deckId, authentication);
+
+        // assert
+        assertThat(result).isEqualTo(Arrays.asList(cardDTO1, cardDTO2));
     }
 }
