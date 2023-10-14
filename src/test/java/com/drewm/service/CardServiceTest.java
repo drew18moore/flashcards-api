@@ -264,4 +264,20 @@ class CardServiceTest {
         // assert
         assertThrows(ResourceNotFoundException.class, () -> cardService.deleteCard(cardId, authentication));
     }
+
+    @Test
+    void deleteCard_unauthorizedUser() {
+        // given
+        final int cardId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Card existingCard = new Card(2, 1, "Front", "Back");
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(cardRepository.findById(cardId)).thenReturn(Optional.of(existingCard));
+
+        // assert
+        assertThrows(UnauthorizedException.class, () -> cardService.deleteCard(cardId, authentication));
+    }
 }
