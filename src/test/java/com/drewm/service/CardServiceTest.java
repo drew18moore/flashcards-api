@@ -3,6 +3,7 @@ package com.drewm.service;
 import com.drewm.dto.CardDTO;
 import com.drewm.dto.EditCardRequest;
 import com.drewm.dto.NewCardRequest;
+import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.exception.UnauthorizedException;
 import com.drewm.model.Card;
 import com.drewm.model.Deck;
@@ -192,5 +193,23 @@ class CardServiceTest {
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> cardService.editCard(null, request, authentication));
+    }
+
+    @Test
+    void editCard_cardNotFound() {
+        // given
+        final int cardId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        EditCardRequest request = new EditCardRequest("New Front", "New Back");
+
+        Deck deck = new Deck(1, user.getId(), "Deck #1", true, null);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(cardRepository.findById(cardId)).thenReturn(Optional.empty());
+
+        // assert
+        assertThrows(ResourceNotFoundException.class, () -> cardService.editCard(cardId, request, authentication));
     }
 }
