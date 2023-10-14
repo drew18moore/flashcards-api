@@ -22,7 +22,7 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
@@ -34,14 +34,14 @@ public class AuthService {
             throw new IllegalArgumentException("Username and password cannot be empty");
         }
 
-        if (repository.existsByUsername(request.username())) {
+        if (userRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("Username already exists");
         }
         User user = User.builder()
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
                 .build();
-        repository.save(user);
+        userRepository.save(user);
         String token = jwtService.generateToken(user);
         UserDTO userDTO = userDTOMapper.apply(user);
         return new AuthResponse(token, userDTO);
