@@ -70,6 +70,51 @@ class AuthServiceTest {
     }
 
     @Test
+    void register_emptyStringUsername() {
+        // given
+        RegisterRequest request = new RegisterRequest("", "pass123");
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> authService.register(request));
+    }
+
+    @Test
+    void register_nullUsername() {
+        // given
+        RegisterRequest request = new RegisterRequest(null, "pass123");
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> authService.register(request));
+    }
+
+    @Test
+    void register_springOfSpacesUsername() {
+        // given
+        RegisterRequest request = new RegisterRequest("  ", "pass123");
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> authService.register(request));
+    }
+
+    @Test
+    void register_emptyStringPassword() {
+        // given
+        RegisterRequest request = new RegisterRequest("username", "");
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> authService.register(request));
+    }
+
+    @Test
+    void register_nullPassword() {
+        // given
+        RegisterRequest request = new RegisterRequest("username", null);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> authService.register(request));
+    }
+
+    @Test
     void login() {
     }
 
