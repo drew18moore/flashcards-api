@@ -230,4 +230,24 @@ class CardServiceTest {
         // assert
         assertThrows(UnauthorizedException.class, () -> cardService.editCard(cardId, request, authentication));
     }
+
+    @Test
+    void deleteCard() {
+        // given
+        final int cardId = 1;
+        User user = new User(1, "test user", "testuser", "pass123");
+        Deck deck = new Deck(1, user.getId(), "Deck #1", true, null);
+        Card existingCard = new Card(user.getId(), 1, "Front", "Back");
+        Authentication authentication = mock(Authentication.class);
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+        when(cardRepository.findById(cardId)).thenReturn(Optional.of(existingCard));
+
+        // then
+        cardService.deleteCard(cardId, authentication);
+
+        // assert
+        verify(cardRepository, times(1)).deleteById(cardId);
+    }
 }
