@@ -77,4 +77,17 @@ public class CardService {
         cardRepository.save(card);
         return cardDTOMapper.apply(card);
     }
+
+    public void deleteCard(Integer cardId, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Integer userId = user.getId();
+
+        Card card = cardRepository.findById(cardId).orElseThrow(() -> new ResourceNotFoundException("Card not found"));
+
+        if (!card.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not authorized to delete this card");
+        }
+
+        cardRepository.deleteById(cardId);
+    }
 }

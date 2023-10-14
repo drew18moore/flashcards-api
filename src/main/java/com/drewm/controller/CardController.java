@@ -23,4 +23,10 @@ public class CardController {
     public ResponseEntity<?> editCard(@PathVariable Integer cardId, @RequestBody EditCardRequest request, Authentication authentication) {
         return ResponseEntity.ok(cardService.editCard(cardId, request, authentication));
     }
+
+    @DeleteMapping("/{cardId}")
+    public ResponseEntity<?> deleteCard(@PathVariable Integer cardId, Authentication authentication) {
+        cardService.deleteCard(cardId, authentication);
+        return ResponseEntity.ok("Card with id: " + cardId + " has been deleted successfully");
+    }
 }
