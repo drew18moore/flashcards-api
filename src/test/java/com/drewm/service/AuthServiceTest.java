@@ -1,6 +1,7 @@
 package com.drewm.service;
 
 import com.drewm.config.JwtService;
+import com.drewm.dto.AuthRequest;
 import com.drewm.dto.AuthResponse;
 import com.drewm.dto.RegisterRequest;
 import com.drewm.dto.UserDTO;
@@ -13,11 +14,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,7 +119,37 @@ class AuthServiceTest {
     }
 
     @Test
+    void register_usernameAlreadyExists() {
+        // given
+        RegisterRequest request = new RegisterRequest("username", "pass123");
+
+        // when
+        when(userRepository.existsByUsername(request.username())).thenReturn(true);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> authService.register(request));
+    }
+
+    @Test
     void login() {
+        // given
+        AuthRequest request = new AuthRequest("username", "pass123");
+        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
+        User user = new User(1, "test user", "testuser", "pass123");
+        UserDTO userDTO = new UserDTO(user.getId(), request.username());
+        Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
+
+        // when
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(jwtService.generateToken(any(User.class))).thenReturn(token);
+        when(userDTOMapper.apply(any(User.class))).thenReturn(userDTO);
+
+        // then
+        AuthResponse res = authService.login(request);
+
+        // assert
+        assertThat(res.token()).isEqualTo(token);
+        assertThat(res.userDTO()).isEqualTo(userDTO);
     }
 
     @Test
