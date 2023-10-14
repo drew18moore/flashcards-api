@@ -179,4 +179,18 @@ class CardServiceTest {
         assertThat(cardDTO.fontText()).isEqualTo(request.frontText());
         assertThat(cardDTO.backText()).isEqualTo(request.backText());
     }
+
+    @Test
+    void editCard_nullCardId() {
+        // given
+        User user = new User(1, "test user", "testuser", "pass123");
+        Authentication authentication = mock(Authentication.class);
+        EditCardRequest request = new EditCardRequest("New Front", "New Back");
+
+        // when
+        when(authentication.getPrincipal()).thenReturn(user);
+
+        // assert
+        assertThrows(IllegalArgumentException.class, () -> cardService.editCard(null, request, authentication));
+    }
 }
