@@ -200,4 +200,17 @@ class AuthServiceTest {
         // assert
         assertThrows(AuthException.class, () -> authService.getUserFromToken(request));
     }
+
+    @Test
+    void getUserFromToken_nullUsername() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // when
+        when(request.getHeader("Authorization")).thenReturn("Bearer mockToken");
+        when(jwtService.extractUsername("mockToken")).thenReturn(null);
+
+        // assert
+        assertThrows(RuntimeException.class, () -> authService.getUserFromToken(request));
+    }
 }
