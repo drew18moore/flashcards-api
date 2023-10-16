@@ -8,6 +8,7 @@ import com.drewm.dto.UserDTO;
 import com.drewm.model.User;
 import com.drewm.repository.UserRepository;
 import com.drewm.utils.UserDTOMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,5 +157,22 @@ class AuthServiceTest {
 
     @Test
     void getUserFromToken() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        User user = new User(1, "test user", "testUser", "pass123");
+        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername());
+
+        // when
+        when(request.getHeader("Authorization")).thenReturn("Bearer mockToken");
+        when(jwtService.extractUsername("mockToken")).thenReturn("testUser");
+        when(userService.getUserByUsername("testUser")).thenReturn(Optional.of(user));
+        when(userDTOMapper.apply(user)).thenReturn(userDTO);
+
+        // when
+        AuthResponse response = authService.getUserFromToken(request);
+
+        // assert
+        assertThat(response.token()).isEqualTo("mockToken");
+        assertThat(response.userDTO()).isEqualTo(userDTO);
     }
 }
