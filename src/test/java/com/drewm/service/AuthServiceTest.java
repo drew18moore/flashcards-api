@@ -5,6 +5,7 @@ import com.drewm.dto.AuthRequest;
 import com.drewm.dto.AuthResponse;
 import com.drewm.dto.RegisterRequest;
 import com.drewm.dto.UserDTO;
+import com.drewm.exception.AuthException;
 import com.drewm.model.User;
 import com.drewm.repository.UserRepository;
 import com.drewm.utils.UserDTOMapper;
@@ -174,5 +175,29 @@ class AuthServiceTest {
         // assert
         assertThat(response.token()).isEqualTo("mockToken");
         assertThat(response.userDTO()).isEqualTo(userDTO);
+    }
+
+    @Test
+    void getUserFromToken_nullAuthHeader() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // when
+        when(request.getHeader("Authorization")).thenReturn(null);
+
+        // assert
+        assertThrows(AuthException.class, () -> authService.getUserFromToken(request));
+    }
+
+    @Test
+    void getUserFromToken_missingBearerToken() {
+        // given
+        HttpServletRequest request = mock(HttpServletRequest.class);
+
+        // when
+        when(request.getHeader("Authorization")).thenReturn("no token");
+
+        // assert
+        assertThrows(AuthException.class, () -> authService.getUserFromToken(request));
     }
 }
