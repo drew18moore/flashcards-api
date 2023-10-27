@@ -7,6 +7,7 @@ public record DeckDTO(
         Integer userId,
         String name,
         boolean isPrivate,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        Integer numCards
 ) {
 }
