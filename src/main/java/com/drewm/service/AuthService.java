@@ -30,14 +30,19 @@ public class AuthService {
     private final UserDTOMapper userDTOMapper;
 
     public AuthResponse register(RegisterRequest request) {
-        if (request.username() == null || request.username().trim().isEmpty() || !StringUtils.hasLength(request.password())) {
-            throw new IllegalArgumentException("Username and password cannot be empty");
+        if (
+            request.displayName() == null || request.displayName().trim().isEmpty() ||
+            request.username() == null || request.username().trim().isEmpty() ||
+            !StringUtils.hasLength(request.password())
+        ) {
+            throw new IllegalArgumentException("Display name, username, and password cannot be empty");
         }
 
         if (userRepository.existsByUsername(request.username())) {
             throw new IllegalArgumentException("Username already exists");
         }
         User user = User.builder()
+                .displayName(request.displayName())
                 .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
                 .build();

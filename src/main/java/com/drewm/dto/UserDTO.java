@@ -1,6 +1,10 @@
 package com.drewm.dto;
 
+import java.time.LocalDateTime;
+
 public record UserDTO(
         Integer id,
-        String username
+        String displayName,
+        String username,
+        LocalDateTime createdAt
 ) {}
