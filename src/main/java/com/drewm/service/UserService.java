@@ -30,6 +30,10 @@ public class UserService {
         return userRepository.findUserByUsername(username);
     }
 
+    public Optional<User> getUserByUserId(Integer userId) {
+        return userRepository.findById(userId);
+    }
+
     public UserDTO editUser(Integer userId, EditUserRequest request, Authentication authentication) {
         User authUser = (User) authentication.getPrincipal();
         String displayName = request.displayName();

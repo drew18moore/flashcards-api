@@ -73,13 +73,9 @@ public class AuthService {
         }
 
         String token = authorizationHeader.substring(7);
-        String username = jwtService.extractUsername(token);
+        Integer userId = Integer.valueOf(jwtService.extractUserId(token));
 
-        if (username == null) {
-            throw new RuntimeException("Could not extract username from JWT");
-        }
-
-        User user = userService.getUserByUsername(username).orElseThrow(() -> new ResourceNotFoundException("User doesn't exist"));
+        User user = userService.getUserByUserId(userId).orElseThrow(() -> new ResourceNotFoundException("User doesn't exist"));
         UserDTO userDTO = userDTOMapper.apply(user);
         return new AuthResponse(token, userDTO);
     }
