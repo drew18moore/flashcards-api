@@ -1,11 +1,12 @@
 package com.drewm.controller;
 
+import com.drewm.dto.EditUserRequest;
 import com.drewm.dto.UserDTO;
 import com.drewm.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,5 +19,10 @@ public class UserController {
     @GetMapping
     public List<UserDTO> fetchAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<?> editUser(@PathVariable Integer userId, @RequestBody EditUserRequest request, Authentication authentication) {
+        return ResponseEntity.ok(userService.editUser(userId, request, authentication));
     }
 }

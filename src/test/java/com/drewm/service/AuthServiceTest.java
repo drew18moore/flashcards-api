@@ -59,9 +59,9 @@ class AuthServiceTest {
     @Test
     void register() {
         // given
-        RegisterRequest request = new RegisterRequest("username", "pass123");
+        RegisterRequest request = new RegisterRequest("Display Name", "username", "pass123");
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-        UserDTO userDTO = new UserDTO(1, request.username());
+        UserDTO userDTO = new UserDTO(1, request.displayName(), request.username(), null);
 
         // when
         when(userRepository.existsByUsername(request.username())).thenReturn(false);
@@ -80,7 +80,7 @@ class AuthServiceTest {
     @Test
     void register_emptyStringUsername() {
         // given
-        RegisterRequest request = new RegisterRequest("", "pass123");
+        RegisterRequest request = new RegisterRequest("Display Name", "", "pass123");
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> authService.register(request));
@@ -89,7 +89,7 @@ class AuthServiceTest {
     @Test
     void register_nullUsername() {
         // given
-        RegisterRequest request = new RegisterRequest(null, "pass123");
+        RegisterRequest request = new RegisterRequest("Display Name", null, "pass123");
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> authService.register(request));
@@ -98,7 +98,7 @@ class AuthServiceTest {
     @Test
     void register_springOfSpacesUsername() {
         // given
-        RegisterRequest request = new RegisterRequest("  ", "pass123");
+        RegisterRequest request = new RegisterRequest("Display Name", "  ", "pass123");
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> authService.register(request));
@@ -107,7 +107,7 @@ class AuthServiceTest {
     @Test
     void register_emptyStringPassword() {
         // given
-        RegisterRequest request = new RegisterRequest("username", "");
+        RegisterRequest request = new RegisterRequest("Display Name", "username", "");
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> authService.register(request));
@@ -116,7 +116,7 @@ class AuthServiceTest {
     @Test
     void register_nullPassword() {
         // given
-        RegisterRequest request = new RegisterRequest("username", null);
+        RegisterRequest request = new RegisterRequest("Display Name", "username", null);
 
         // assert
         assertThrows(IllegalArgumentException.class, () -> authService.register(request));
@@ -125,7 +125,7 @@ class AuthServiceTest {
     @Test
     void register_usernameAlreadyExists() {
         // given
-        RegisterRequest request = new RegisterRequest("username", "pass123");
+        RegisterRequest request = new RegisterRequest("Display Name", "username", "pass123");
 
         // when
         when(userRepository.existsByUsername(request.username())).thenReturn(true);
@@ -139,8 +139,8 @@ class AuthServiceTest {
         // given
         AuthRequest request = new AuthRequest("username", "pass123");
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-        User user = new User(1, "test user", "testuser", "pass123");
-        UserDTO userDTO = new UserDTO(user.getId(), request.username());
+        User user = new User(1, "test user", "testuser", "pass123", null);
+        UserDTO userDTO = new UserDTO(user.getId(), user.getDisplayName(), request.username(), null);
         Authentication authentication = new UsernamePasswordAuthenticationToken(user, null);
 
         // when
@@ -160,8 +160,8 @@ class AuthServiceTest {
     void getUserFromToken() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
-        User user = new User(1, "test user", "testUser", "pass123");
-        UserDTO userDTO = new UserDTO(user.getId(), user.getUsername());
+        User user = new User(1, "test user", "testUser", "pass123", null);
+        UserDTO userDTO = new UserDTO(user.getId(), user.getDisplayName(), user.getUsername(), null);
 
         // when
         when(request.getHeader("Authorization")).thenReturn("Bearer mockToken");

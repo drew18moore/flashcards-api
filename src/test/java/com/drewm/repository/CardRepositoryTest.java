@@ -29,7 +29,7 @@ class CardRepositoryTest {
     @BeforeEach
     void setUp() {
         userRepository.save(
-                new User(1, "test user",  "testuser", "pass123")
+                new User(1, "test user",  "testuser", "pass123", null)
         );
     }
 

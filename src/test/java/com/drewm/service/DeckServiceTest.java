@@ -51,14 +51,14 @@ class DeckServiceTest {
     @Test
     void getAllDecksByUser() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
 
         Deck deck1 = new Deck(1, "Deck #1", true);
         Deck deck2 = new Deck(1, "Deck #2", false);
 
-        DeckDTO deckDTO1 = new DeckDTO(deck1.getId(), 1, deck1.getName(), deck1.isPrivate(), deck1.getCreatedAt());
-        DeckDTO deckDTO2 = new DeckDTO(deck2.getId(), 1, deck2.getName(), deck2.isPrivate(), deck2.getCreatedAt());
+        DeckDTO deckDTO1 = new DeckDTO(deck1.getId(), 1, deck1.getName(), deck1.isPrivate(), deck1.getCreatedAt(), 0);
+        DeckDTO deckDTO2 = new DeckDTO(deck2.getId(), 1, deck2.getName(), deck2.isPrivate(), deck2.getCreatedAt(), 0);
 
         // when
         when (authentication.getPrincipal()).thenReturn(user);
@@ -76,7 +76,7 @@ class DeckServiceTest {
     @Test
     void newDeck() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         NewDeckRequest request = new NewDeckRequest("New Deck", true);
         Authentication authentication = mock(Authentication.class);
         Deck deck = new Deck(1, "Deck #1", true);
@@ -85,7 +85,7 @@ class DeckServiceTest {
         when(authentication.getPrincipal()).thenReturn(user);
         when(deckRepository.save(any())).thenReturn(deck);
 
-        DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null);
+        DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null, 0);
         when(deckDTOMapper.apply(any(Deck.class))).thenReturn(mockDeckDTO);
 
         // then
@@ -100,7 +100,7 @@ class DeckServiceTest {
     @Test
     void newDeck_emptyName() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         NewDeckRequest request = new NewDeckRequest("", true);
         Authentication authentication = mock(Authentication.class);
 
@@ -114,7 +114,7 @@ class DeckServiceTest {
     @Test
     void newDeck_nullIsPrivate() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         NewDeckRequest request = new NewDeckRequest("Deck #1", null);
         Authentication authentication = mock(Authentication.class);
 
@@ -129,12 +129,12 @@ class DeckServiceTest {
     void editDeck() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         EditDeckRequest request = new EditDeckRequest("Deck #1", false);
         Authentication authentication = mock(Authentication.class);
 
         Deck existingDeck = new Deck(1, "Deck #1", true);
-        DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null);
+        DeckDTO mockDeckDTO = new DeckDTO(user.getId(), user.getId(), request.name(), request.isPrivate(), null, 0);
 
         // when
         when(authentication.getPrincipal()).thenReturn(user);
@@ -152,7 +152,7 @@ class DeckServiceTest {
     @Test
     void editDeck_nullDeckId() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         EditDeckRequest request = new EditDeckRequest("Deck #1", false);
         Authentication authentication = mock(Authentication.class);
 
@@ -167,7 +167,7 @@ class DeckServiceTest {
     void editDeck_nonexistentDeck() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         EditDeckRequest request = new EditDeckRequest("Deck #1", false);
         Authentication authentication = mock(Authentication.class);
 
@@ -183,7 +183,7 @@ class DeckServiceTest {
     void editDeck_unauthorizedUser() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         EditDeckRequest request = new EditDeckRequest("Deck #1", false);
         Authentication authentication = mock(Authentication.class);
         Deck existingDeck = new Deck(2, "Deck #1", true);
@@ -200,7 +200,7 @@ class DeckServiceTest {
     void deleteDeck() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Deck existingDeck = new Deck(1, "Deck #1", true);
         Authentication authentication = mock(Authentication.class);
 
@@ -219,7 +219,7 @@ class DeckServiceTest {
     void deleteDeck_nonexistentDeck() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
 
         // when
@@ -234,7 +234,7 @@ class DeckServiceTest {
     void deleteDeck_unauthorizedUser() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Deck existingDeck = new Deck(2, "Deck #1", true);
         Authentication authentication = mock(Authentication.class);
 
@@ -250,7 +250,7 @@ class DeckServiceTest {
     void getAllCardsByDeckId() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Deck existingDeck = new Deck(deckId, user.getId(), "Deck #1", true, null);
         Authentication authentication = mock(Authentication.class);
 
@@ -278,7 +278,7 @@ class DeckServiceTest {
     void getAllCardsByDeckId_deckNotFound() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
 
         // when
@@ -293,7 +293,7 @@ class DeckServiceTest {
     void getAllCardsByDeckId_unauthorizedUser() {
         // given
         final int deckId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Deck existingDeck = new Deck(deckId, 2, "Deck #1", true, null);
         Authentication authentication = mock(Authentication.class);
 

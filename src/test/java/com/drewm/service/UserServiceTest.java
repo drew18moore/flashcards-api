@@ -42,13 +42,13 @@ class UserServiceTest {
     void getAllUsers() {
         // given
         List<User> users = Arrays.asList(
-                new User(1, "User 1", "user1", "pass123"),
-                new User(2, "User 2", "user2", "password123")
+                new User(1, "User 1", "user1", "pass123", null),
+                new User(2, "User 2", "user2", "password123", null)
         );
         when(userRepository.findAll()).thenReturn(users);
 
         // when
-        List<UserDTO> userDTOs = Arrays.asList(new UserDTO(1, "user1"), new UserDTO(2, "user2"));
+        List<UserDTO> userDTOs = Arrays.asList(new UserDTO(1, "User 1", "user1", null), new UserDTO(2, "User 2", "user2", null));
         when(userDTOMapper.apply(any(User.class))).thenReturn(userDTOs.get(0), userDTOs.get(1));
         List<UserDTO> result = userService.getAllUsers();
 

@@ -46,7 +46,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(1, "Front", "Back");
         Deck deck = new Deck(request.deckId(), 1, "Deck #1", true, null);
@@ -72,7 +72,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck_emptyDeckId() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(null, "Front", "Back");
 
@@ -86,7 +86,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck_nullFrontText() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(1, null, "Back");
 
@@ -100,7 +100,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck_emptyFrontTextString() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(1, "", "Back");
 
@@ -114,7 +114,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck_nullBackText() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(1, "Front", null);
 
@@ -128,7 +128,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck_emptyBackTextString() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(1, "Front", "");
 
@@ -142,7 +142,7 @@ class CardServiceTest {
     @Test
     void createNewCardInDeck_unauthorizedUser() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         NewCardRequest request = new NewCardRequest(1, "Front", "Back");
         Deck deck = new Deck(request.deckId(), 2, "Deck #1", true, null);
@@ -159,7 +159,7 @@ class CardServiceTest {
     void editCard() {
         // given
         final int cardId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         EditCardRequest request = new EditCardRequest("New Front", "New Back");
 
@@ -184,7 +184,7 @@ class CardServiceTest {
     @Test
     void editCard_nullCardId() {
         // given
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         EditCardRequest request = new EditCardRequest("New Front", "New Back");
 
@@ -199,7 +199,7 @@ class CardServiceTest {
     void editCard_cardNotFound() {
         // given
         final int cardId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         EditCardRequest request = new EditCardRequest("New Front", "New Back");
 
@@ -217,7 +217,7 @@ class CardServiceTest {
     void editCard_unauthorizedUser() {
         // given
         final int cardId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
         EditCardRequest request = new EditCardRequest("New Front", "New Back");
 
@@ -235,7 +235,7 @@ class CardServiceTest {
     void deleteCard() {
         // given
         final int cardId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Card existingCard = new Card(user.getId(), 1, "Front", "Back");
         Authentication authentication = mock(Authentication.class);
 
@@ -254,7 +254,7 @@ class CardServiceTest {
     void deleteCard_cardNotFound() {
         // given
         final int cardId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Authentication authentication = mock(Authentication.class);
 
         // when
@@ -269,7 +269,7 @@ class CardServiceTest {
     void deleteCard_unauthorizedUser() {
         // given
         final int cardId = 1;
-        User user = new User(1, "test user", "testuser", "pass123");
+        User user = new User(1, "test user", "testuser", "pass123", null);
         Card existingCard = new Card(2, 1, "Front", "Back");
         Authentication authentication = mock(Authentication.class);
 
