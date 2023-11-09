@@ -6,7 +6,7 @@ public record CardDTO(
         Integer id,
         Integer userId,
         Integer deckId,
-        String fontText,
+        String frontText,
         String backText,
         LocalDateTime createdAt
 ) {

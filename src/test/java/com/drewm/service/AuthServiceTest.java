@@ -165,8 +165,8 @@ class AuthServiceTest {
 
         // when
         when(request.getHeader("Authorization")).thenReturn("Bearer mockToken");
-        when(jwtService.extractUsername("mockToken")).thenReturn("testUser");
-        when(userService.getUserByUsername("testUser")).thenReturn(Optional.of(user));
+        when(jwtService.extractUserId("mockToken")).thenReturn("1");
+        when(userService.getUserByUserId(1)).thenReturn(Optional.of(user));
         when(userDTOMapper.apply(user)).thenReturn(userDTO);
 
         // when
@@ -202,13 +202,13 @@ class AuthServiceTest {
     }
 
     @Test
-    void getUserFromToken_nullUsername() {
+    void getUserFromToken_nullUserId() {
         // given
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         // when
         when(request.getHeader("Authorization")).thenReturn("Bearer mockToken");
-        when(jwtService.extractUsername("mockToken")).thenReturn(null);
+        when(jwtService.extractUserId("mockToken")).thenReturn(null);
 
         // assert
         assertThrows(RuntimeException.class, () -> authService.getUserFromToken(request));

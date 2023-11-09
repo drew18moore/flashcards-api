@@ -65,7 +65,7 @@ class CardServiceTest {
         // assert
         verify(cardRepository, times(1)).save(any());
         assertThat(request.deckId()).isEqualTo(cardDTO.deckId());
-        assertThat(request.frontText()).isEqualTo(cardDTO.fontText());
+        assertThat(request.frontText()).isEqualTo(cardDTO.frontText());
         assertThat(request.backText()).isEqualTo(cardDTO.backText());
     }
 
@@ -177,7 +177,7 @@ class CardServiceTest {
 
         // assert
         verify(cardRepository, times(1)).save(any());
-        assertThat(cardDTO.fontText()).isEqualTo(request.frontText());
+        assertThat(cardDTO.frontText()).isEqualTo(request.frontText());
         assertThat(cardDTO.backText()).isEqualTo(request.backText());
     }
 
