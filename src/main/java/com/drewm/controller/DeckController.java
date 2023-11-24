@@ -39,4 +39,16 @@ public class DeckController {
     public ResponseEntity<?> getAllCardsByDeckId(@PathVariable Integer deckId, Authentication authentication) {
         return ResponseEntity.ok(deckService.getAllCardsByDeckId(deckId, authentication));
     }
+
+    @GetMapping("/{deckId}/test")
+    public ResponseEntity<?> getTextQuestions(
+            @PathVariable Integer deckId,
+            @RequestParam Integer numQuestions,
+            @RequestParam Boolean trueFalse,
+            @RequestParam Boolean multipleChoice,
+            @RequestParam Boolean written,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(deckService.getTestQuestions(deckId, numQuestions, trueFalse, multipleChoice, written, authentication));
+    }
 }

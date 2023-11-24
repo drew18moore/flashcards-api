@@ -1,11 +1,9 @@
 package com.drewm.service;
 
-import com.drewm.dto.CardDTO;
-import com.drewm.dto.DeckDTO;
-import com.drewm.dto.EditDeckRequest;
-import com.drewm.dto.NewDeckRequest;
+import com.drewm.dto.*;
 import com.drewm.exception.ResourceNotFoundException;
 import com.drewm.exception.UnauthorizedException;
+import com.drewm.model.Card;
 import com.drewm.model.Deck;
 import com.drewm.model.User;
 import com.drewm.repository.CardRepository;
@@ -105,5 +103,18 @@ public class DeckService {
         }
 
         return cardRepository.findAllByDeckId(deckId).stream().map(cardDTOMapper).collect(Collectors.toList());
+    }
+
+    public List<Card> getTestQuestions(Integer deckId, Integer numQuestions, Boolean trueFalse, Boolean multipleChoice, Boolean written, Authentication authentication) {
+        User user = (User) authentication.getPrincipal();
+        Integer userId = user.getId();
+
+        Deck deck = deckRepository.findById(deckId).orElseThrow(() -> new ResourceNotFoundException("Deck not found"));
+
+        if(deck.isPrivate() && !deck.getUserId().equals(userId)) {
+            throw new UnauthorizedException("You are not authorized to view cards from this deck");
+        }
+
+        return cardRepository.findRandomCardsByDeckId(deckId, numQuestions);
     }
 }
