@@ -105,7 +105,7 @@ public class DeckService {
         return cardRepository.findAllByDeckId(deckId).stream().map(cardDTOMapper).collect(Collectors.toList());
     }
 
-    public List<TestQuestionDTO> getTestQuestions(
+    public List<Question> getTestQuestions(
             Integer deckId,
             Integer numQuestions,
             Boolean trueFalse,
@@ -128,22 +128,25 @@ public class DeckService {
 
         List<Card> selectedCards = allCards.subList(0, numQuestions);
 
-        List<TestQuestionDTO> testQuestions = new ArrayList<>();
+        final List<Question> testQuestions = new ArrayList<>();
         Random random = new Random();
 
         for (Card card : selectedCards) {
             int totalTypes = (trueFalse ? 1 : 0) + (multipleChoice ? 1 : 0) + (written ? 1 : 0);
             int rand = random.nextInt(totalTypes);
 
-            TestQuestionDTO question = new TestQuestionDTO();
             if (rand < (trueFalse ? 1 : 0)) {
+                TrueFalseQuestion question = new TrueFalseQuestion();
                 boolean isTrueQuestion = random.nextBoolean();
 
-                question.setQuestion(card.getFrontText());
-                question.setChoiceTF(isTrueQuestion ? card.getBackText() : getRandomIncorrectBackText(allCards, card));
-                question.setAnswerTF(isTrueQuestion);
+                question.setQuestionText(card.getFrontText());
+                question.setQuestionType(QuestionType.TRUE_FALSE);
+                question.setOption(isTrueQuestion ? card.getBackText() : getRandomIncorrectBackText(allCards, card));
+                question.setAnswer(isTrueQuestion);
 
+                testQuestions.add(question);
             } else if (rand < (trueFalse ? 1 : 0) + (multipleChoice ? 1 : 0)) {
+                MultipleChoiceQuestion question = new MultipleChoiceQuestion();
                 // Create a list of unique backTexts excluding the correct answer
                 List<String> uniqueBackTexts = allCards.stream()
                         .filter(card_ -> !card_.getBackText().equals(card.getBackText()))
@@ -158,14 +161,20 @@ public class DeckService {
 
                 // Shuffle the choices to randomize the order
                 Collections.shuffle(choices);
-                question.setQuestion(card.getFrontText());
-                question.setChoices(choices.toArray(new String[0]));
-                question.setAnswerMC(choices.indexOf(card.getBackText()));
+                question.setQuestionText(card.getFrontText());
+                question.setQuestionType(QuestionType.MULTIPLE_CHOICE);
+                question.setOptions(choices);
+                question.setAnswer(choices.indexOf(card.getBackText()));
+
+                testQuestions.add(question);
             } else {
-                question.setQuestion(card.getFrontText());
-                question.setAnswerWritten(card.getBackText());
+                WrittenQuestion question = new WrittenQuestion();
+                question.setQuestionText(card.getFrontText());
+                question.setQuestionType(QuestionType.WRITTEN);
+                question.setAnswer(card.getBackText());
+
+                testQuestions.add(question);
             }
-            testQuestions.add(question);
         }
         return testQuestions;
     }
