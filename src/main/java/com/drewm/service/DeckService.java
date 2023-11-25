@@ -15,7 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,7 +105,14 @@ public class DeckService {
         return cardRepository.findAllByDeckId(deckId).stream().map(cardDTOMapper).collect(Collectors.toList());
     }
 
-    public List<Card> getTestQuestions(Integer deckId, Integer numQuestions, Boolean trueFalse, Boolean multipleChoice, Boolean written, Authentication authentication) {
+    public List<TestQuestionDTO> getTestQuestions(
+            Integer deckId,
+            Integer numQuestions,
+            Boolean trueFalse,
+            Boolean multipleChoice,
+            Boolean written,
+            Authentication authentication
+    ) {
         User user = (User) authentication.getPrincipal();
         Integer userId = user.getId();
 
@@ -115,6 +122,64 @@ public class DeckService {
             throw new UnauthorizedException("You are not authorized to view cards from this deck");
         }
 
-        return cardRepository.findRandomCardsByDeckId(deckId, numQuestions);
+        List<Card> allCards = cardRepository.findAllByDeckId(deckId);
+
+        Collections.shuffle(allCards);
+
+        List<Card> selectedCards = allCards.subList(0, numQuestions);
+
+        List<TestQuestionDTO> testQuestions = new ArrayList<>();
+        Random random = new Random();
+
+        for (Card card : selectedCards) {
+            int totalTypes = (trueFalse ? 1 : 0) + (multipleChoice ? 1 : 0) + (written ? 1 : 0);
+            int rand = random.nextInt(totalTypes);
+
+            TestQuestionDTO question = new TestQuestionDTO();
+            if (rand < (trueFalse ? 1 : 0)) {
+                boolean isTrueQuestion = random.nextBoolean();
+
+                question.setQuestion(card.getFrontText());
+                question.setChoiceTF(isTrueQuestion ? card.getBackText() : getRandomIncorrectBackText(allCards, card));
+                question.setAnswerTF(isTrueQuestion);
+
+            } else if (rand < (trueFalse ? 1 : 0) + (multipleChoice ? 1 : 0)) {
+                // Create a list of unique backTexts excluding the correct answer
+                List<String> uniqueBackTexts = allCards.stream()
+                        .filter(card_ -> !card_.getBackText().equals(card.getBackText()))
+                        .map(Card::getBackText)
+                        .distinct()
+                        .collect(Collectors.toList());
+                // Shuffle the list and take three distinct random backTexts
+                Collections.shuffle(uniqueBackTexts);
+                List<String> choices = new ArrayList<>();
+                choices.add(card.getBackText());
+                choices.addAll(uniqueBackTexts.subList(0, Math.min(3, uniqueBackTexts.size())));
+
+                // Shuffle the choices to randomize the order
+                Collections.shuffle(choices);
+                question.setQuestion(card.getFrontText());
+                question.setChoices(choices.toArray(new String[0]));
+                question.setAnswerMC(choices.indexOf(card.getBackText()));
+            } else {
+                question.setQuestion(card.getFrontText());
+                question.setAnswerWritten(card.getBackText());
+            }
+            testQuestions.add(question);
+        }
+        return testQuestions;
+    }
+
+    private String getRandomIncorrectBackText(List<Card> cards, Card selectedCard) {
+        Random random = new Random();
+        String incorrectBackText;
+
+        // Keep generating a random backText until it is different from the selected card's backText
+        do {
+            Card randomCard = cards.get(random.nextInt(cards.size()));
+            incorrectBackText = randomCard.getBackText();
+        } while (incorrectBackText.equals(selectedCard.getBackText()));
+
+        return incorrectBackText;
     }
 }
