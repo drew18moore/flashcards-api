@@ -136,43 +136,13 @@ public class DeckService {
             int rand = random.nextInt(totalTypes);
 
             if (rand < (trueFalse ? 1 : 0)) {
-                TrueFalseQuestion question = new TrueFalseQuestion();
-                boolean isTrueQuestion = random.nextBoolean();
-
-                question.setQuestionText(card.getFrontText());
-                question.setQuestionType(QuestionType.TRUE_FALSE);
-                question.setOption(isTrueQuestion ? card.getBackText() : getRandomIncorrectBackText(allCards, card));
-                question.setAnswer(isTrueQuestion);
-
+                TrueFalseQuestion question = createTrueFalseQuestion(card, allCards, random);
                 testQuestions.add(question);
             } else if (rand < (trueFalse ? 1 : 0) + (multipleChoice ? 1 : 0)) {
-                MultipleChoiceQuestion question = new MultipleChoiceQuestion();
-                // Create a list of unique backTexts excluding the correct answer
-                List<String> uniqueBackTexts = allCards.stream()
-                        .filter(card_ -> !card_.getBackText().equals(card.getBackText()))
-                        .map(Card::getBackText)
-                        .distinct()
-                        .collect(Collectors.toList());
-                // Shuffle the list and take three distinct random backTexts
-                Collections.shuffle(uniqueBackTexts);
-                List<String> choices = new ArrayList<>();
-                choices.add(card.getBackText());
-                choices.addAll(uniqueBackTexts.subList(0, Math.min(3, uniqueBackTexts.size())));
-
-                // Shuffle the choices to randomize the order
-                Collections.shuffle(choices);
-                question.setQuestionText(card.getFrontText());
-                question.setQuestionType(QuestionType.MULTIPLE_CHOICE);
-                question.setOptions(choices);
-                question.setAnswer(choices.indexOf(card.getBackText()));
-
+                MultipleChoiceQuestion question = createMultipleChoiceQuestion(card, allCards, random);
                 testQuestions.add(question);
             } else {
-                WrittenQuestion question = new WrittenQuestion();
-                question.setQuestionText(card.getFrontText());
-                question.setQuestionType(QuestionType.WRITTEN);
-                question.setAnswer(card.getBackText());
-
+                WrittenQuestion question = createWrittenQuestion(card);
                 testQuestions.add(question);
             }
         }
@@ -190,5 +160,50 @@ public class DeckService {
         } while (incorrectBackText.equals(selectedCard.getBackText()));
 
         return incorrectBackText;
+    }
+
+    private TrueFalseQuestion createTrueFalseQuestion(Card card, List<Card> allCards, Random random) {
+        TrueFalseQuestion question = new TrueFalseQuestion();
+        boolean isTrueQuestion = random.nextBoolean();
+
+        question.setQuestionText(card.getFrontText());
+        question.setQuestionType(QuestionType.TRUE_FALSE);
+        question.setOption(isTrueQuestion ? card.getBackText() : getRandomIncorrectBackText(allCards, card));
+        question.setAnswer(isTrueQuestion);
+
+        return question;
+    }
+
+    private MultipleChoiceQuestion createMultipleChoiceQuestion(Card card, List<Card> allCards, Random random) {
+        MultipleChoiceQuestion question = new MultipleChoiceQuestion();
+        // Create a list of unique backTexts excluding the correct answer
+        List<String> uniqueBackTexts = allCards.stream()
+                .filter(card_ -> !card_.getBackText().equals(card.getBackText()))
+                .map(Card::getBackText)
+                .distinct()
+                .collect(Collectors.toList());
+        // Shuffle the list and take three distinct random backTexts
+        Collections.shuffle(uniqueBackTexts);
+        List<String> choices = new ArrayList<>();
+        choices.add(card.getBackText());
+        choices.addAll(uniqueBackTexts.subList(0, Math.min(3, uniqueBackTexts.size())));
+
+        // Shuffle the choices to randomize the order
+        Collections.shuffle(choices);
+        question.setQuestionText(card.getFrontText());
+        question.setQuestionType(QuestionType.MULTIPLE_CHOICE);
+        question.setOptions(choices);
+        question.setAnswer(choices.indexOf(card.getBackText()));
+
+        return question;
+    }
+
+    private WrittenQuestion createWrittenQuestion(Card card) {
+        WrittenQuestion question = new WrittenQuestion();
+        question.setQuestionText(card.getFrontText());
+        question.setQuestionType(QuestionType.WRITTEN);
+        question.setAnswer(card.getBackText());
+
+        return question;
     }
 }
