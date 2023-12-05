@@ -24,7 +24,6 @@ VOLUME /tmp
 COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
 COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
 COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-#COPY target/*.jar app.jar
-#ENTRYPOINT ["java", "-jar", "/app.jar"]
+
 ENTRYPOINT ["java", "-cp", "app:app/lib/*", "com.drewm.FlashcardsApiApplication"]
 EXPOSE 8080
