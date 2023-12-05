@@ -16,17 +16,10 @@ The backend-end for a flashcards mobile app for iOS and Android
 - Create, edit, or delete decks
 - Create, edit, or delete cards in a deck
 - Study your flashcards
+- Create custom tests to test your knowledge
 
 ## Getting Started
 ### Prerequisites
-- Install Java version 17
-
-Go to https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
-
-- IntelliJ IDEA
-
-Go to https://www.jetbrains.com/idea/download/?section=mac and install the Community Edition
-
 - Docker Desktop
 
 Go to https://docs.docker.com/desktop/ and install Docker Desktop
@@ -42,10 +35,10 @@ docker compose version
 ```
 git clone https://github.com/drew18moore/flashcards-api.git
 ```
-2. Navigate to the project's root directory and run the following commands
+2. Navigate to the project's root directory and run the following command
 ```
 docker compose up
 ```
-3. Open the project in IntelliJ
-4. Open the FlashcardsApiApplication.java file and press the play button
+3. The web server is now running on localhost:8000
+4. Use a tool such a Postman to interact with the api
 5. Visit https://github.com/drew18moore/flashcards-client for instructions on how to install and run the front-end
