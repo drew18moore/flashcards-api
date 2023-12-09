@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findUserByUsername(String username);
     boolean existsByUsername(String username);
 
-    @Query(value = "SELECT * FROM User u WHERE (LOWER(u.display_name) LIKE LOWER(CONCAT('%', :query, '%'))) OR (LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')))", nativeQuery = true)
+    @Query(value = "SELECT * FROM _user u WHERE (LOWER(u.display_name) LIKE LOWER(CONCAT('%', :query, '%'))) OR (LOWER(u.username) LIKE LOWER(CONCAT('%', :query, '%')))", nativeQuery = true)
     List<User> searchUsers(String query);
 }
