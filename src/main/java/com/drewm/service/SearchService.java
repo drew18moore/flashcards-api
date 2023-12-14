@@ -24,10 +24,10 @@ public class SearchService {
     private final UserRepository userRepository;
     private final UserDTOMapper userDTOMapper;
 
-    public SearchDTO search(String query, Authentication authentication) {
+    public SearchDTO search(String query, Authentication authentication, Integer limit) {
         User user = (User) authentication.getPrincipal();
-        List<DeckDTO> decks = deckRepository.searchDecks(query, user.getId()).stream().map(deckDTOMapper).collect(Collectors.toList());
-        List<UserDTO> users = userRepository.searchUsers(query).stream().map(userDTOMapper).collect(Collectors.toList());
+        List<DeckDTO> decks = deckRepository.searchDecks(query, user.getId(), limit).stream().map(deckDTOMapper).collect(Collectors.toList());
+        List<UserDTO> users = userRepository.searchUsers(query, limit).stream().map(userDTOMapper).collect(Collectors.toList());
         return new SearchDTO(decks, users);
     }
 }

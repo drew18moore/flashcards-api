@@ -16,7 +16,7 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping
-    public ResponseEntity<?> search(@RequestParam String query, Authentication authentication) {
-        return ResponseEntity.ok(searchService.search(query, authentication));
+    public ResponseEntity<?> search(@RequestParam String query, Authentication authentication, @RequestParam(required = false, defaultValue = "5") Integer limit) {
+        return ResponseEntity.ok(searchService.search(query, authentication, limit));
     }
 }
