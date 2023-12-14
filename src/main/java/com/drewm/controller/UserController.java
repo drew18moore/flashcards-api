@@ -21,6 +21,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @GetMapping("/{userId}")
+    public ResponseEntity<?> getUserProfile(@PathVariable Integer userId) {
+        return ResponseEntity.ok(userService.getUserProfile(userId));
+    }
+
     @PatchMapping("/{userId}")
     public ResponseEntity<?> editUser(@PathVariable Integer userId, @RequestBody EditUserRequest request, Authentication authentication) {
         return ResponseEntity.ok(userService.editUser(userId, request, authentication));

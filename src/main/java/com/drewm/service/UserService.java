@@ -34,6 +34,10 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
+    public UserDTO getUserProfile(Integer userId) {
+        return userDTOMapper.apply(userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId)));
+    }
+
     public UserDTO editUser(Integer userId, EditUserRequest request, Authentication authentication) {
         User authUser = (User) authentication.getPrincipal();
         String displayName = request.displayName();
