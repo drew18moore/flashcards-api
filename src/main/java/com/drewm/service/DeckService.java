@@ -26,11 +26,12 @@ public class DeckService {
     private final CardRepository cardRepository;
     private final CardDTOMapper cardDTOMapper;
 
-    public List<DeckDTO> getAllDecksByUser(Authentication authentication) {
+    public List<DeckDTO> getAllDecksByUser(Integer userId, Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        Integer userId = user.getId();
+        Integer authUserId = user.getId();
 
-        return deckRepository.findAllByUserId(userId).stream().map(deckDTOMapper).collect(Collectors.toList());
+        if (userId == null || authUserId.equals(userId)) return deckRepository.findAllByUserId(authUserId).stream().map(deckDTOMapper).collect(Collectors.toList());
+        else return deckRepository.findAllPublicDecksByUserId(userId).stream().map(deckDTOMapper).collect(Collectors.toList());
     }
 
     public DeckDTO newDeck(NewDeckRequest request, Authentication authentication) {

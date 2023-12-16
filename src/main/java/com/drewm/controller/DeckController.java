@@ -15,8 +15,8 @@ public class DeckController {
     private final DeckService deckService;
 
     @GetMapping
-    public ResponseEntity<?> getAllDecksByUser(Authentication authentication) {
-        return ResponseEntity.ok(deckService.getAllDecksByUser(authentication));
+    public ResponseEntity<?> getAllDecksByUser(@RequestParam(required = false) Integer userId, Authentication authentication) {
+        return ResponseEntity.ok(deckService.getAllDecksByUser(userId, authentication));
     }
 
     @PostMapping

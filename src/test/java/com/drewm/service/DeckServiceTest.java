@@ -67,7 +67,7 @@ class DeckServiceTest {
         when(deckDTOMapper.apply(deck2)).thenReturn(deckDTO2);
 
         // then
-        List<DeckDTO> result = deckService.getAllDecksByUser(authentication);
+        List<DeckDTO> result = deckService.getAllDecksByUser(user.getId(), authentication);
 
         // assert
         assertThat(result).isEqualTo(Arrays.asList(deckDTO1, deckDTO2));
