@@ -207,4 +207,8 @@ public class DeckService {
 
         return question;
     }
+
+    public MemoryCard generateMemoryGame(Integer deckId, String difficulty, Authentication authentication) {
+        return null;
+    }
 }

@@ -51,4 +51,13 @@ public class DeckController {
     ) {
         return ResponseEntity.ok(deckService.getTestQuestions(deckId, numQuestions, trueFalse, multipleChoice, written, authentication));
     }
+
+    @GetMapping("/{deckId}/memory")
+    public ResponseEntity<?> generateMemoryGame(
+            @PathVariable Integer deckId,
+            @RequestParam String difficulty,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(deckService.generateMemoryGame(deckId, difficulty, authentication));
+    }
 }
